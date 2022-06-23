@@ -13,3 +13,9 @@ Install enviroment and migrations dependencies:
 ```npm i dotenv```
 ```npm install -g db-migrate```
 ```npm install db-migrate db-migrate-pg```
+
+
+Install bcrypt
+
+```npm i bcrypt```
+```npm i --save-dev @types/bcrypt```

@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import { Book } from './models/book'
 import book_route from './handlers/book'
+import user_route from './handlers/users'
 
 const app: express.Application = express()
 const address: string = "0.0.0.0:3000"
@@ -13,6 +14,7 @@ app.get('/', function (_req: Request, res: Response) {
 })
 
 book_route(app)
+user_route(app)
 
 
 /* app.get('/books', (_req: Request, res: Response) => {
