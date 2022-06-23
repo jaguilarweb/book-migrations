@@ -1,20 +1,18 @@
-import express, { Request, Response } from 'express'
-import bodyParser from 'body-parser'
-import { Book } from './models/book'
-import book_route from './handlers/book'
-
-const app: express.Application = express()
-const address: string = "0.0.0.0:3000"
-
-app.use(bodyParser.json())
-
-app.get('/', function (_req: Request, res: Response) {
-    res.send('Hello World!')
-})
-
-book_route(app)
-
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+exports.__esModule = true;
+var express_1 = __importDefault(require("express"));
+var body_parser_1 = __importDefault(require("body-parser"));
+var book_1 = __importDefault(require("./handlers/book"));
+var app = (0, express_1["default"])();
+var address = "0.0.0.0:3000";
+app.use(body_parser_1["default"].json());
+app.get('/', function (_req, res) {
+    res.send('Hello World!');
+});
+(0, book_1["default"])(app);
 /* app.get('/books', (_req: Request, res: Response) => {
     try {
         res.send('This is the index route')
@@ -72,8 +70,6 @@ app.delete('/books/:id', (_req: Request, res: Response) => {
         res.json(err)
     }
 }) */
-
-
 app.listen(3000, function () {
-    console.log(`starting app on: ${address}`)
-})
+    console.log("starting app on: ".concat(address));
+});
