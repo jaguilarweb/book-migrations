@@ -19,3 +19,8 @@ Install bcrypt
 
 ```npm i bcrypt```
 ```npm i --save-dev @types/bcrypt```
+
+Install jsonwebtoken
+
+```npm i jsonwebtoken```
+```npm i --save-dev @types/jsonwebtoken```

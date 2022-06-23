@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express'
 import bodyParser from 'body-parser'
-import { Book } from './models/book'
-import book_route from './handlers/book'
+import book_route from './handlers/books'
 import user_route from './handlers/users'
 
 const app: express.Application = express()

@@ -39,78 +39,108 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var user_1 = require("../models/user");
+var book_1 = require("../models/book");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var store = new user_1.UserStore();
+var store = new book_1.BookStore();
 var index = function (_req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var users;
+    var books;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, store.index()];
             case 1:
-                users = _a.sent();
-                res.json(users);
+                books = _a.sent();
+                res.json(books);
+                return [2 /*return*/];
+        }
+    });
+}); };
+var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var book;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, store.show(req.params.id)];
+            case 1:
+                book = _a.sent();
+                res.json(book);
                 return [2 /*return*/];
         }
     });
 }); };
 var create = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, newUser, token, err_1;
+    var authorizationHeader, token, book, newBook, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                user = {
-                    username: req.body.username,
-                    password: req.body.password
-                };
+                try {
+                    authorizationHeader = req.headers.authorization;
+                    token = authorizationHeader.split(' ')[1];
+                    jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
+                }
+                catch (err) {
+                    res.status(401);
+                    res.json('Access denied, invalid token');
+                    return [2 /*return*/];
+                }
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, store.create(user)];
-            case 2:
-                newUser = _a.sent();
-                token = jsonwebtoken_1["default"].sign({ user: newUser }, process.env.TOKEN_SECRET);
-                res.json(token);
-                return [3 /*break*/, 4];
-            case 3:
-                err_1 = _a.sent();
-                res.status(400);
-                res.json(err_1);
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); };
-var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, u, token, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                user = {
-                    username: req.body.username,
-                    password: req.body.password
+                book = {
+                    id: req.body.id,
+                    title: req.body.title,
+                    author: req.body.author,
+                    totalPages: req.body.totalPages,
+                    summary: req.body.summary
                 };
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, store.authenticate(user.username, user.password)];
+                return [4 /*yield*/, store.create(book)];
             case 2:
-                u = _a.sent();
-                token = jsonwebtoken_1["default"].sign({ user: u }, process.env.TOKEN_SECRET);
-                res.json(token);
+                newBook = _a.sent();
+                res.json(newBook);
                 return [3 /*break*/, 4];
             case 3:
                 error_1 = _a.sent();
-                res.status(401);
-                res.json({ error: error_1 });
+                res.status(400);
+                res.json(error_1);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
-var user_route = function (app) {
-    app.get('/users', index);
-    app.post('/users/authenticate', authenticate);
-    app.post('/users', create);
+var destroy = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var authorizationHeader, token, deleted, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                try {
+                    authorizationHeader = req.headers.authorization;
+                    token = authorizationHeader.split(' ')[1];
+                    jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
+                }
+                catch (err) {
+                    res.status(401);
+                    res.json('Access denied, invalid token');
+                    return [2 /*return*/];
+                }
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, store["delete"](req.body.id)];
+            case 2:
+                deleted = _a.sent();
+                res.json(deleted);
+                return [3 /*break*/, 4];
+            case 3:
+                error_2 = _a.sent();
+                res.status(400);
+                res.json({ error: error_2 });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+var book_route = function (app) {
+    app.get('/books', index);
+    app.get('/books/:id', show);
+    app.post('/books', create);
+    app["delete"]('/books/:id', destroy);
 };
-exports["default"] = user_route;
+exports["default"] = book_route;

@@ -1,5 +1,6 @@
 import express, {Request, Response} from 'express'
 import { Book, BookStore } from '../models/book'
+import jwt from 'jsonwebtoken'
 
 const store = new BookStore()
 
@@ -14,6 +15,17 @@ const show = async (req: Request, res: Response) => {
 }
 
 const create = async (req: Request, res: Response) => {
+
+  try {
+    const authorizationHeader = req.headers.authorization!
+    const token = authorizationHeader.split(' ')[1]
+    jwt.verify(token, process.env.TOKEN_SECRET!)
+  } catch(err) {
+      res.status(401)
+      res.json('Access denied, invalid token')
+      return
+  }
+
   try {
     const book: Book = {
       id: req.body.id,
@@ -24,15 +36,30 @@ const create = async (req: Request, res: Response) => {
     }
     const newBook = await store.create(book)
     res.json(newBook)
-  } catch (err) {
+  } catch (error) {
     res.status(400)
-    res.json(err)
+    res.json(error)
   }
 }
 
-const destroy = async(req: Request, res: Response) => {
-  const deleted = await store.delete(req.body.id)
-  res.json(deleted)
+const destroy = async (req: Request, res: Response) => {
+  try {
+      const authorizationHeader = req.headers.authorization!
+      const token = authorizationHeader.split(' ')[1]
+      jwt.verify(token, process.env.TOKEN_SECRET!)
+  } catch(err) {
+      res.status(401)
+      res.json('Access denied, invalid token')
+      return
+  }
+
+  try {
+      const deleted = await store.delete(req.body.id)
+      res.json(deleted)
+  } catch (error) {
+      res.status(400)
+      res.json({ error })
+  }
 }
 
 const book_route = (app: express.Application) => {
