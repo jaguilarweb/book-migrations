@@ -54,7 +54,7 @@ const destroy = async (req: Request, res: Response) => {
   }
 
   try {
-      const deleted = await store.delete(req.body.id)
+      const deleted = await store.delete(req.params.id)
       res.json(deleted)
   } catch (error) {
       res.status(400)
